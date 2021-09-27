@@ -11,18 +11,10 @@ Implement a Lambda function that consumes events from Kinesis and exports them t
 
 - [Lambda function code](#code)
 
-- [Configuration](#config)
+- [AWS CLI Version](#version)
 
-- [Load balancing](#lb)
-
-- [Deployment to Kubernetes](#deploy2k8s)
-  - [The Kubernetes resources created](#k8s-rsrc)
-  - [Downstream service instances](#downstream-svc)
-  - [Create config-map resource](#configmap)
-  - [Deployment of the application](#deploy-app)
-  - [Access the reverse proxy](#access-svc)
-
-
+- [Create IAM role 'lambda-get-kinesis-events-export-to-s3'](#iam_role)
+  - [Create policy document](#iam_policy)
 
 
 
@@ -107,7 +99,7 @@ Thus, we persist the Kinesis events to S3.
 
 
 
-
+<a name="version" id="version"></a>
 ## AWS CLI Version
 
 The version of he AWS client we use is
@@ -120,9 +112,12 @@ The version of he AWS client we use is
 
 
 
+<a name="iam_role" id="iam_role"></a>
 ##  Create IAM role 'lambda-get-kinesis-events-export-to-s3'
 
 
+
+<a name="iam_policy" id="iam_policy"></a>
 ### Create policy document
 
 The  policy doc is
