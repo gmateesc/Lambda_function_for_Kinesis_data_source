@@ -27,7 +27,7 @@ Implement a Lambda function that consumes events from Kinesis and exports them t
 
 
 
-<a name="prereqs" id="prereqs" />
+<a name="prereqs" id="prereqs"></a>
 ## Prerequisites
 
 
@@ -38,9 +38,8 @@ The AWS client is installed on the machine, and the AWS configuration and creden
 
 
 
-<a name="code" id="code" />
+<a name="code" id="code"></a>
 ## Lambda function code 
-
 
 
 I have implemented the lambda function in Python. I developed the code
