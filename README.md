@@ -3,16 +3,27 @@
 Implement a Lambda function that consumes events from Kinesis and exports them to S3.
 
 
+## Prerequisites
+
+The AWS client is installed on the machine, and the AWS configuration and credentials are set up under
+```bash
+   ~/.aws
 ```
-Part I: Create Lambda Function that is connected to a Kinesis Data Source
-==========================================================================
 
 
 
 
-1. Prerequisites
+## Lambda function code 
 
 
+I have implemented the lambda function in Python:
+
+![lambda_function.py](images/lambda_function_code.png)
+
+
+
+
+```
 
 2. AWS Version
 
@@ -130,15 +141,6 @@ Part I: Create Lambda Function that is connected to a Kinesis Data Source
           5.4.2 Inspect CloudWatch log-group and log-stream-names with the 'aws logs' CLI
 
 
----
-
-
-
-
-
-Part II: Logging to s3
-======================
-
 
 6. Export CloudWatch logs to S3
 
@@ -163,25 +165,6 @@ Part II: Logging to s3
 
 
 
-
-
-
-
-Part I: Create Lambda Function that is connected to a Kinesis Data Source
-==========================================================================
-
-
-
-1. Prerequisites
-----------------
-
-
-The AWS client is installed on the machine, and the AWS configuration and credentials are set up under
-
-   ~/.aws
-
-
----
 
 
 
@@ -839,7 +822,7 @@ and you see this JSON
 
 
 
-Save it as input_us-east-1.json then run
+Save it as kinesis_simple_event.json then run
 
 
 ---
@@ -854,7 +837,7 @@ Save it as input_us-east-1.json then run
    gabriel $ aws lambda invoke \
                       --cli-binary-format raw-in-base64-out \
                       --function-name ProcessKinesisRecords \
-                      --payload file://input_us-east-1.json \
+                      --payload file://kinesis_simple_event.json \
                       output_us-east-2.txt
    {
       "StatusCode": 200,
@@ -1117,7 +1100,7 @@ ProcessKinesisRecords function, specifying the --log-type Tail option.
    gabriel $ aws lambda invoke \
                       --cli-binary-format raw-in-base64-out \
                       --function-name ProcessKinesisRecords \
-                      --payload file://input_us-east-1.json \
+                      --payload file://kinesis_simple_event.json \
                       --log-type Tail		            \
 	              output_us-east-1a.txt
   {
@@ -1145,7 +1128,7 @@ Run
    gabriel $ aws lambda invoke \
                       --cli-binary-format raw-in-base64-out \
                       --function-name ProcessKinesisRecords \
-                      --payload file://input_us-east-1.json \
+                      --payload file://kinesis_simple_event.json \
                       --log-type Tail		            \
                       --query 'LogResult'                   \
 		      --output text                         \
@@ -1185,7 +1168,7 @@ i.e.,
    gabriel $ aws lambda invoke \
                         --cli-binary-format raw-in-base64-out \
                         --function-name ProcessKinesisRecords \
-                        --payload file://input_us-east-1.json \
+                        --payload file://kinesis_simple_event.json \
                         --log-type Tail		              \
 	                output_us-east-1a.txt                 \
 			| jq -M '.LogResult' | sed 's/\"//g' | base64 -d
@@ -1890,15 +1873,15 @@ In section
   4.3.4 Invoke lambda func with a sample event frm US-EAST-1
 
 we invoked the lambda function explicitly passing as payload the content of a sample Kinesis record,
-in the file input_us-east-1.json
+in the file kinesis_simple_event.json
 
    gabriel $ cd ~/Desktop/GoogleDrive/Cloud/Deployment/02_Terraform/07_Serverless_lambda/03_AWS_lambda_kinesis/02_Code
 
    gabriel $ aws lambda invoke \
                       --cli-binary-format raw-in-base64-out \
                       --function-name ProcessKinesisRecords \
-                      --payload file://input_us-east-1.json  \
-                      output_us-east-2.txt
+                      --payload file://kinesis_simple_event.json  \
+                      output_us-east-1.txt
    {
       "StatusCode": 200,
       "ExecutedVersion": "$LATEST"
