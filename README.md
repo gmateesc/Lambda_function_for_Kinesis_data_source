@@ -22,8 +22,11 @@ Implement a Lambda function that consumes events from Kinesis and exports them t
     - [Attach policies to the role 'lambda-get-kinesis-events-export-to-s3'](#role_policies_attach)
     - [Check policies attached to the role 'lambda-get-kinesis-events-export-to-s3'](#check_policies)
 
-- [Create the S3 bucket 'lambda-for-kinesis-ds-gabriel' and attach bucket policy](#s3_mb)#
-
+- [Create S3 bucket and attach bucket policy](#s3_mb)
+  - [Create S3 bucket 'lambda-for-kinesis-ds-gabriel'](#s3_mb_kinesis)
+  - [Create S3 bucket policy and attach it to bucket 'lambda-for-kinesis-ds-gabriel'](#s3_bucket_policy)
+    - [Create S3 bucket policy "s3-bucket-policy.json"](#s3_policy_create)
+    - [Attach the policy to the bucket lambda-for-kinesis-ds-gabriel](#s3_policy_attach)
 
 
 
@@ -319,26 +322,14 @@ Will assign the polices needed to access Kinesis, CloudWatch and S3.
 
 
 <a name="s3_mb" id="s3_mb"></a>
-## Create the S3 bucket 'lambda-for-kinesis-ds-gabriel' and attach bucket policy
+## Create S3 bucket and attach bucket policy
 
 
-### Create S3 bucket 'lambda-for-kinesis-ds-gabriel' with 'aws s3 create-bucket'
+<a name="s3_mb_kinesis" id="s3_mb_kinesis"></a>
+### Create S3 bucket 'lambda-for-kinesis-ds-gabriel' 
 
 
-Check
-```
-  gabriel $ curl -ik https://s3.us-east-1.amazonaws.com 
-  HTTP/1.1 307 Temporary Redirect
-  x-amz-id-2: gyejvJ8T9qiUYIjvwBbBdKT2Vldwtpl2ZLqKBuGpdvgoz6XaAcWGr8+ZOVKx6jDBGQmAQ6VN9wE=
-  x-amz-request-id: HFP4F2R99GXE338D
-  Date: Sun, 26 Sep 2021 14:51:51 GMT
-  Location: https://aws.amazon.com/s3/
-  Server: AmazonS3
-  Content-Length: 0
-```
-
-
-
+Create S3 bucket 'lambda-for-kinesis-ds-gabriel' with 'aws s3 create-bucket'
 
 Run 'aws s3api create-bucket'
 ```
@@ -373,9 +364,12 @@ Check
 
 
 
+
+<a name="s3_bucket_policy" id="s3_bucket_policy"></a>
 ### Create S3 bucket policy and attach it to bucket 'lambda-for-kinesis-ds-gabriel'
 
 
+<a name="s3_policy_create" id="s3_policy_create"></a>
 #### Create S3 bucket policy "s3-bucket-policy.json"
 
 We have the bucket
@@ -421,6 +415,10 @@ Define the policy document
 ```
 
 
+
+
+
+<a name="s3_policy_attach" id="s3_policy_attach"></a>
 #### Attach the policy to the bucket lambda-for-kinesis-ds-gabriel
 
 Attach the S3 bucket policy
