@@ -1,6 +1,6 @@
 # Lambda_function_for_Kinesis_data_source
 
-Implement a Lambda function that consumes events from Kinesis
+Implement a Lambda function that consumes events from Kinesis and exports them to S3.
 
 
 ```
@@ -392,7 +392,7 @@ to CloudWatch Logs.
 
 Do this
 
-  zip function.zip index.js
+  zip function_js.zip index.js
 
 
 Details
@@ -400,7 +400,7 @@ Details
   gabriel $ cd ~/Desktop/GoogleDrive/Cloud/Deployment/02_Terraform/07_Serverless_lambda/03_AWS_lambda_kinesis/02_Code
 
   gabriel $ more zip_js.sh 
-  zip function.zip index.js
+  zip function_js.zip index.js
 
   gabriel $ ./zip_js.sh 
   adding: index.js (deflated 41%)
@@ -590,12 +590,12 @@ Get ARN
 Steps:
 
 
-0. Go to the dir containing function.zip
+0. Go to the dir containing function_js.zip
 
     gabriel $ cd ~/Desktop/GoogleDrive/Cloud/Deployment/02_Terraform/07_Serverless_lambda/03_AWS_lambda_kinesis/02_Code
 
     gabriel $ ls -1
-    function.zip
+    function_js.zip
     index.js
     zip_js.sh
 
@@ -615,11 +615,11 @@ Steps:
 2. Run "aws lamba create-function", specifying the function name of the new function, the zip-file,
    handler, runtime and role
 
-    gabriel $ aws lambda create-function \
+    gabriel $ aws lambda create-function    \
       --function-name ProcessKinesisRecords \
-      --zip-file fileb://function.zip \
+      --zip-file fileb://function_js.zip    \
       --handler index.handler \
-      --runtime nodejs12.x \
+      --runtime nodejs12.x    \
       --role "arn:aws:iam::138668221340:role/lambda-kinesis-role-created-from-console"
     {
       "FunctionName": "ProcessKinesisRecords",
