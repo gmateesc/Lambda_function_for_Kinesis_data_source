@@ -63,15 +63,14 @@ Let's describe the Python code in detail:
 ```
 
 The `lambda_handler` function receives receives and processes events from a Kinesis data,
-which is configured as shown in section
-
-  7.4 Add Kinesis stream 'kinesis-stream-for-lambda' as event source to Lambda func 'ProcessKinesisEventsAndPersistToS3'
+which is configured as shown in section "Add Kinesis stream 'kinesis-stream-for-lambda' 
+as event source to Lambda func 'ProcessKinesisEventsAndPersistToS3'".
 
 
 The for loop iterates over all event records in `event['Records']`, extracts the payload,
 writes it to the CloudWatch logs and exports it to the S3 bucket 'lambda-for-kinesis-ds-gabriel'
-(section 4. Create the S3 bucket 'lambda-for-kinesis-ds-gabriel' and attach bucket policy,
-described the creation of the S3 bucket 'lambda-for-kinesis-ds-gabriel').
+(section "Create the S3 bucket 'lambda-for-kinesis-ds-gabriel' and attach bucket policy" 
+describes the creation of the S3 bucket 'lambda-for-kinesis-ds-gabriel').
 
 
 We use the time stamp (current time in milliseconds) as the key of the object inserted in S3,
@@ -445,99 +444,6 @@ and
     ]
   }
 ```
-
-
-
-```
-
-3. Create IAM role 'lambda-get-kinesis-events-export-to-s3'
-     
-     3.1 Create policy doc
-	   
-     3.2 Run 'aws iam create-role --role-name lambda-get-kinesis-events-export-to-s3'
-	   
-     3.3 Assign policies to the role lambda-get-kinesis-events-export-to-s3
-
-
-
-
-4. Create the S3 bucket 'lambda-for-kinesis-ds-gabriel' and attach bucket policy
-
-    4.1 Create S3 bucket 'lambda-for-kinesis-ds-gabriel'
-          4.1.1 Run the "aws s3 create-bucket" CLI
-          4.1.2 Check the S3 bucket ARN
-
-
-    4.2 Create S3 bucket policy and attach it to bucket 'lambda-for-kinesis-ds-gabriel'
-          4.2.0 Command 'aws s3api put-bucket-policy'
-          4.2.1 Create S3 bucket policy "s3-bucket-policy.json"
-          4.2.2 Attach the policy to the bucket lambda-for-kinesis-ds-gabriel
-
-
-
-
-
-5. Create Kinesis stream
-
-    5.0 How to create Kinesis stream and make it the event source for the lambda function [DOC]
-
-    5.1 Create the Kinesis event stream 'kinesis-stream-for-lambda'
-
-
-
-
-
-6. Create the lambda function
-     
-           7.3.1 Create deployment package
-
-           7.3.2 Create lambda-function ProcessKinesisEventsAndPersistToS3
-
-           7.3.3 Invoke function with test event
-	  
-                   7.3.3.1 Test function from the Lambda function console
-                             7.3.3.1.1 Create test event 'kinesis-event'
-                             7.3.3.1.2 Invoke lambda fnction with test event 'kinesis-event'
-
-                   7.3.3.2 Test function from the AWS CLI
-                             7.3.3.2.1 Create simple Kinesis event kinesis_simple_event.json
-                             7.3.3.2.2 Invoke lambda function with event kinesis_simple_event.json		  
-
-
-
-
-
-7.4 Add Kinesis stream 'kinesis-stream-for-lambda' as event source to Lambda func 'ProcessKinesisEventsAndPersistToS3'
-
-           7.4.1 The Kinesis stream "kinesis-stream-for-lambda"
-
-           7.4.2 Add Kinesis stream as event source to function 'ProcessKinesisRecords'
-
-           7.4.3 Check event source mappings for lambda function 'ProcessKinesisEventsAndPersistToS3'
-
-
-
-     7.5 Test the lambda function
-
-           7.5.0 Test function from the Lambda function console
-                    7.5.0.1 Create test event 'kinesis-event'
-                    7.5.0.2 Invoke lambda fnction with test event 'kinesis-event'
-                    7.5.0.3 Get the S3 object created by lambda invocation from console
-
-           7.5.1 Test function from the AWS CLI
-                    7.5.1.1 Create simple Kinesis event kinesis_simple_event.json
-                    7.5.1.2 Invoke lambda function with event kinesis_simple_event.json
-                    7.5.1.3 Get the S3 object created by lambda invocation
-
-
----
-
-
-
-
-
-
-
 
 
 
@@ -1052,7 +958,4 @@ Steps:
    gabriel $ more s3_out 
    Hello, this is a test 123.
 ```
-
-
-
 
