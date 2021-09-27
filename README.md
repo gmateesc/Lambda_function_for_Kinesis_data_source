@@ -86,6 +86,7 @@ Part I: Create Lambda Function that is connected to a Kinesis Data Source
          4.4.3 Script to download last five log events
 	 
 
+
     4.5 Get logs with 'aws logs'
 
          4.5.0 Commands 'aws logs' to run
@@ -109,13 +110,27 @@ Part I: Create Lambda Function that is connected to a Kinesis Data Source
 
 5. Create Kinesis stream and associate it with the Lambda function
 
-    5.1 Add the Kinesis stream with 'aws kinesis create-stream' command
+    5.0 How to create Kinesis stream and make it the event source for the lambda function [DOC]
+
+    5.1 Create Kinesis stream with 'aws kinesis create-stream' command
 
     5.2 Add Kinesis stream as event source to Lambda function w/ 'aws lambda create-event-source-mapping'
+         5.2.0 What we have
+         5.2.1 Run 'aws lambda add-event-source' to add Kinesis stream as event source to
+	       function 'ProcessKinesisRecords'
+         5.2.2 Check the event source mappings for lambda function 'ProcessKinesisRecords'
 
-    5.3 Test the Kinesis event stream is received by the Lambda function
+    5.3 Send test event to Kinesis 
          5.3.0 Overview
          5.3.1 Create event with 'aws kinesis put-record' and test event source mapping sends it to Lambda function
+
+    5.4 Test the Lambda function receives the event by inspecting the CloudWatch logs
+          5.4.0 Overview
+          5.4.1 Inspect CloudWatch log-group and log-stream-names in the console
+          5.4.2 Inspect CloudWatch log-group and log-stream-names with the 'aws logs' CLI
+
+
+---
 
 
 
@@ -1644,8 +1659,12 @@ See
 
 
 
-5.1 Create Kinesis stream with 'aws kinesis create-stream' command
-------------------------------------------------------------------
+
+5.0 How to create Kinesis stream and make it the event source for the lambda function [DOC]
+--------------------------------------------------------------------------------------------
+
+
+Steps:
 
 
 1. Use the create-stream command to create a stream:
@@ -1658,7 +1677,7 @@ See
 
      aws kinesis describe-stream --stream-name lambda-stream
 
-   You shoild get the following output:
+   You should get the following output:
 
    {
      "StreamDescription": {
@@ -1692,6 +1711,35 @@ See
 ---
 
 
+3. Define the Kinesis stream as event source for the lambda function
+
+   aws lambda create-event-source-mapping \
+      --function-name ProcessKinesisRecords \
+      --event-source  arn:aws:kinesis:us-west-2:123456789012:stream/lambda-stream \
+      --batch-size 100 \
+      --starting-position LATEST
+
+---
+
+
+
+
+5.1 Create Kinesis stream with 'aws kinesis create-stream' command
+------------------------------------------------------------------
+
+
+1. Use the create-stream command to create the stream 'kinesis-stream-for-lambda':
+
+    gabriel $ aws kinesis create-stream --stream-name kinesis-stream-for-lambda --shard-count 1
+
+
+
+2. Then get the stream ARN using the describe-stream command:
+
+    gabriel $ aws kinesis describe-stream --stream-name kinesis-stream-for-lambda| jq -M '.StreamDescription.StreamARN'
+    "arn:aws:kinesis:us-east-1:138668221340:stream/kinesis-stream-for-lambda"
+
+
 We use the stream ARN in the next step to associate the Kinesis data stream
 with your Lambda function.
 
@@ -1704,40 +1752,128 @@ with your Lambda function.
 -----------------------------------------------------------------------------------------------------
 
 
-In the previous section, we created an event stream, then got its ARN with
+5.2.0 What we have
+------------------
 
-   $ aws kinesis create-stream --stream-name lambda-stream --shard-count 1
-
-   $ aws kinesis describe-stream --stream-name lambda-stream | jq '.StreamDescription.StreamARN'
-        "StreamARN": "arn:aws:kinesis:us-west-2:123456789012:stream/lambda-stream",
+So far we have
 
 
+o A Kinesis event stream created in the previous section, whose name and ARN are
 
-Now we run the following AWS CLI 'aws lambda add-event-source' command:
+   gabriel $ aws kinesis list-streams
+   {
+      "StreamNames": [
+          "kinesis-stream-for-lambda"
+      ]
+   }
 
-  aws lambda create-event-source-mapping \
-      --function-name ProcessKinesisRecords \
-      --event-source  arn:aws:kinesis:us-west-2:123456789012:stream/lambda-stream \
-      --batch-size 100 \
-      --starting-position LATEST
+   gabriel $ aws kinesis describe-stream --stream-name kinesis-stream-for-lambda| jq -M '.StreamDescription.StreamARN'
+   "arn:aws:kinesis:us-east-1:138668221340:stream/kinesis-stream-for-lambda"
+
+
+
+o The lambda function name and ARN
+
+   gabriel $ aws lambda list-functions \
+     | jq -M '.Functions[] | {"FunctionName": .FunctionName, "FunctionArn": .FunctionArn}'
+   {
+     "FunctionName": "ProcessKinesisRecords",
+     "FunctionArn": "arn:aws:lambda:us-east-1:138668221340:function:ProcessKinesisRecords"
+   }
+
+---
+
+
+
+
+5.2.1 Run 'aws lambda add-event-source' to add Kinesis stream as event source to function 'ProcessKinesisRecords'
+-----------------------------------------------------------------------------------------------------------------
+
+
+Now we run 'aws lambda add-event-source' to add the Kinesis stream as an event source to the lambda
+function 'ProcessKinesisRecords':
+
+
+  gabriel $ aws lambda create-event-source-mapping  \
+        --function-name ProcessKinesisRecords       \
+        --event-source "arn:aws:kinesis:us-east-1:138668221340:stream/kinesis-stream-for-lambda" \
+        --batch-size 100 \
+        --starting-position LATEST
+ {
+    "UUID": "00a3d08e-fa6a-4e0c-8e86-4aafeac0ceef",
+    "BatchSize": 100,
+    "MaximumBatchingWindowInSeconds": 0,
+    "ParallelizationFactor": 1,
+    "EventSourceArn": "arn:aws:kinesis:us-east-1:138668221340:stream/kinesis-stream-for-lambda",
+    "FunctionArn": "arn:aws:lambda:us-east-1:138668221340:function:ProcessKinesisRecords",
+    "LastModified": "2021-09-27T17:26:32.244000+02:00",
+    "LastProcessingResult": "No records processed",
+    "State": "Creating",
+    "StateTransitionReason": "User action",
+    "DestinationConfig": {
+        "OnFailure": {}
+    },
+    "MaximumRecordAgeInSeconds": -1,
+    "BisectBatchOnFunctionError": false,
+    "MaximumRetryAttempts": -1
+  }
+
 
 Note the mapping ID for later use.
 
+  "UUID": "00a3d08e-fa6a-4e0c-8e86-4aafeac0ceef",
 
+---
+
+
+
+5.2.2 Check the event source mappings for lambda function 'ProcessKinesisRecords'
+---------------------------------------------------------------------------------
 
 Get a list of event source mappings by running the list-event-source-mappings command:
 
-  aws lambda list-event-source-mappings \
-         --function-name ProcessKinesisRecords \
-         --event-source arn:aws:kinesis:us-west-2:123456789012:stream/lambda-stream
+  gabriel $ aws lambda list-event-source-mappings  \
+           --function-name ProcessKinesisRecords   \
+           --event-source arn:aws:kinesis:us-east-1:138668221340:stream/kinesis-stream-for-lambda
+  {
+    "EventSourceMappings": [
+        {
+            "UUID": "00a3d08e-fa6a-4e0c-8e86-4aafeac0ceef",
+            "BatchSize": 100,
+            "MaximumBatchingWindowInSeconds": 0,
+            "ParallelizationFactor": 1,
+            "EventSourceArn": "arn:aws:kinesis:us-east-1:138668221340:stream/kinesis-stream-for-lambda",
+            "FunctionArn":    "arn:aws:lambda:us-east-1:138668221340:function:ProcessKinesisRecords",
+            "LastModified":   "2021-09-27T17:27:00+02:00",
+            "LastProcessingResult": "No records processed",
+            "State": "Enabled",
+            "StateTransitionReason": "User action",
+            "DestinationConfig": {
+                "OnFailure": {}
+            },
+            "MaximumRecordAgeInSeconds": -1,
+            "BisectBatchOnFunctionError": false,
+            "MaximumRetryAttempts": -1
+        }
+    ]
+  }
 
 
-In the response, you can verify the status value is enabled.
+and verify that "State" is "Enabled":
+
+  gabriel $ aws lambda list-event-source-mappings    \
+              --function-name ProcessKinesisRecords  \
+	      --event-source arn:aws:kinesis:us-east-1:138668221340:stream/kinesis-stream-for-lambda \
+	      | jq -M '.EventSourceMappings[] | {"State": .State}'
+  {
+    "State": "Enabled"
+  }
+
 
 Event source mappings can be disabled to pause polling temporarily without losing any records.
 
-
 ---
+
 
 
 
@@ -1751,7 +1887,7 @@ Event source mappings can be disabled to pause polling temporarily without losin
 
 In section
 
-  4.3.3 Invoke lambda func with a sample event frm US-EAST-1
+  4.3.4 Invoke lambda func with a sample event frm US-EAST-1
 
 we invoked the lambda function explicitly passing as payload the content of a sample Kinesis record,
 in the file input_us-east-1.json
@@ -1761,7 +1897,7 @@ in the file input_us-east-1.json
    gabriel $ aws lambda invoke \
                       --cli-binary-format raw-in-base64-out \
                       --function-name ProcessKinesisRecords \
-                      --payload file://input_us-east-1.json \
+                      --payload file://input_us-east-1.json  \
                       output_us-east-2.txt
    {
       "StatusCode": 200,
@@ -1769,33 +1905,49 @@ in the file input_us-east-1.json
    }
 
 
-In this section, we add an event record to Kinesis stream "lambda-stream", and test that,
-using the event source mapping defined in the previous section, the event is sent to the
+In this section, we add an event record to Kinesis stream "kinesis-stream-for-lambda", and test
+that, using the event source mapping defined in the previous section, the event is sent to the
 Lambda function.
 
 ---
 
 
 
-5.3.1 Create event with 'aws kinesis put-record' and test event source mapping sends it to Lambda function
-----------------------------------------------------------------------------------------------------------
+5.3.1 Create event w/ 'aws kinesis put-record' and test event source mapping sends it to Lambda function
+---------------------------------------------------------------------------------------------------------
 
 
-We add an event record to the Kinesis stream "lambda-stream", which, using the
-event source mapping defined in the previous section, is sent to the Lambda function
-
-  aws kinesis put-record \
-      --stream-name lambda-stream \
-      --partition-key 1 \
-      --data "Hello, this is a test."
+We add an event record to the Kinesis stream "kinesis-stream-for-lambda", which, using
+the event source mapping defined in the previous section, is sent to the Lambda function
 
 
-where the --data value is a string that the CLI encodes to base64 prior to sending it to Kinesis.
+  gabriel $ aws kinesis put-record \
+              --stream-name kinesis-stream-for-lambda \
+              --partition-key 1                       \
+              --cli-binary-format raw-in-base64-out   \
+              --data "Synthetic event 1 sent to kinesis-stream-for-lambda"
+  {
+      "ShardId": "shardId-000000000000",
+      "SequenceNumber": "49622443395029499785670175668639705570302921445832916994"
+  }
 
+
+where the --data value is a string that the CLI encodes to base64 prior to sending it to Kinesis,
+thanks to the option --cli-binary-format raw-in-base64-out.
 
 You can run the same command more than once to add multiple records to the stream.
 
 
+---
+
+
+
+5.4 Test the Lambda function receives the event by inspecting the CloudWatch logs
+---------------------------------------------------------------------------------
+
+
+5.4.0 Overview
+--------------
 
 The data gets to Lambda function as follows:
 
@@ -1809,8 +1961,112 @@ The data gets to Lambda function as follows:
 
      https://console.aws.amazon.com/cloudwatch
 
+---
+
+
+
+5.4.1 Inspect CloudWatch log-group and log-stream-names in the console
+----------------------------------------------------------------------
+
+Log groups
+
+  https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logsV2:log-groups/log-group/
+
+Select log group
+
+  /aws/lambda/ProcessKinesisRecords
+
+which takes you to
+
+  https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logsV2:log-groups/\
+  log-group/$252Faws$252Flambda$252FProcessKinesisRecords
+
+
+Click on the top log-stream
+
+  https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logsV2:log-groups/\
+  log-group/$252Faws$252Flambda$252FProcessKinesisRecords/\
+  log-events/2021$252F09$252F27$252F$255B$2524LATEST$255D66d8bd4d764744b29a7409c7b0381dec
 
 ---
+
+
+
+
+5.4.2 Inspect CloudWatch log-group and log-stream-names with the 'aws logs' CLI
+-------------------------------------------------------------------------------
+
+
+See
+
+  4.5.1 Run "aws logs describe-log-streams --log-group-name LOG_GROUP_NAME"
+  4.5.2 Run "aws logs get-log-events  --log-group-name LOG_GROUP_NAME --log-stream-name LOG_STREAM_NAME"
+
+
+
+o Get log stream names
+
+  gabriel $ aws logs describe-log-streams    \
+                       --log-group-name /aws/lambda/ProcessKinesisRecords    \
+                       --order-by LastEventTime  \
+                       --descending | jq '.logStreams[] | {"logstreamName": .logStreamName}' | head -12
+  {
+    "logstreamName": "2021/09/27/[$LATEST]66d8bd4d764744b29a7409c7b0381dec"
+  }
+  {
+    "logstreamName": "2021/09/25/[$LATEST]b1ef48f590ed4cf4bf2bd8c34f3afe5c"
+  }
+  {
+    "logstreamName": "2021/09/25/[$LATEST]d68065e763e04ed6be8d1b17fc821334"
+  }
+  {
+    "logstreamName": "2021/09/25/[$LATEST]9ec4743fbdf94119a7d5dfe341d9f934"
+  }
+
+
+
+o Get the events on the log-stream-name 
+
+  gabriel $ aws logs get-log-events  \
+                 --log-group-name /aws/lambda/ProcessKinesisRecords  \
+                 --log-stream-name '2021/09/27/[$LATEST]66d8bd4d764744b29a7409c7b0381dec' \
+		 --limit 5
+  {
+    "events": [
+        {
+            "timestamp": 1632758376455,
+            "message": "START RequestId: 3770519b-4622-4154-827a-ac5cd01cfbd4 Version: $LATEST\n",
+            "ingestionTime": 1632758383343
+        },
+        {
+            "timestamp": 1632758376455,
+            "message": "2021-09-27T15:59:36.455Z\tundefined\tINFO\tLoading function\n",
+            "ingestionTime": 1632758383343
+        },
+        {
+            "timestamp": 1632758376469,
+            "message": "2021-09-27T15:59:36.460Z\t\
+	    3770519b-4622-4154-827a-ac5cd01cfbd4\tINFO\tDecoded payload: Synthetic event 1 sent to kinesis-stream-for-lambda\n",
+            "ingestionTime": 1632758383343
+        },
+        {
+            "timestamp": 1632758376472,
+            "message": "END RequestId: 3770519b-4622-4154-827a-ac5cd01cfbd4\n",
+            "ingestionTime": 1632758383343
+        },
+        {
+            "timestamp": 1632758376472,
+            "message": "REPORT RequestId: 3770519b-4622-4154-827a-ac5cd01cfbd4\t\
+	    Duration: 11.86 ms\tBilled Duration: 12 ms\tMemory Size: 128 MB\tMax Memory Used: 64 MB\tInit Duration: 150.44 ms\t\n",
+            "ingestionTime": 1632758383343
+        }
+    ],
+    "nextForwardToken": "f/36411728524468609562522215402463673426474203616781074436/s",
+    "nextBackwardToken": "b/36411728524089496894147194809057566215839181471179407360/s"
+  }
+
+---
+
 
 
 
