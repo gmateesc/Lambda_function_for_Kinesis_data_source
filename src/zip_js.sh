@@ -1,1 +1,1 @@
-zip function.zip index.js
+zip function_js.zip index.js
