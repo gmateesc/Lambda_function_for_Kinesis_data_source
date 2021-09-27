@@ -131,8 +131,8 @@ The version of he AWS client we use is
 ### Create policy document
 
 The  policy doc is
-
-  gabriel $ cd ~/Desktop/GoogleDrive/Cloud/Deployment/02_Terraform/07_Serverless_lambda/03_AWS_lambda_kinesis/02_Code
+```
+  gabriel $ cd src
 
   gabriel $ more lambda-trust-policy.json
    {
@@ -147,7 +147,7 @@ The  policy doc is
       }
     ]
   }
-
+```
 
 
 <a name="iam_create_role" id="iam_create_role"></a>
@@ -189,7 +189,7 @@ Create role 'lambda-get-kinesis-events-export-to-s3'
 
 <a name="iam_check_role" id="iam_check_role"></a>
 ### Check role lambda-get-kinesis-events-export-to-s3
-
+```
   gabriel $ aws iam get-role --role-name lambda-get-kinesis-events-export-to-s3
   {
     "Role": {
@@ -214,7 +214,7 @@ Create role 'lambda-get-kinesis-events-export-to-s3'
         "RoleLastUsed": {}
     }
   }
-
+```
 
 
 
@@ -564,7 +564,7 @@ Run zip script
 
 Check zip file
 ```
-  gabriel $ cd ~/Desktop/GoogleDrive/Cloud/Deployment/02_Terraform/07_Serverless_lambda/03_AWS_lambda_kinesis/02_Code
+  gabriel $ cd src
 
   gabriel $ ls -l function_py_1.0.0.zip 
   -rw-r--r--  1 gabriel  staff  605 Sep 27 19:17 function_py_1.0.0.zip
