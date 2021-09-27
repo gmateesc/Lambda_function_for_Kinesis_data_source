@@ -3,6 +3,15 @@
 Implement a Lambda function that consumes events from Kinesis and exports them to S3.
 
 
+
+## Table of Contents  
+[Headers](#preqs)  
+
+[Lambda function code](#code)
+
+
+
+<a name="prereqs"/>
 ## Prerequisites
 
 The AWS client is installed on the machine, and the AWS configuration and credentials are set up under
@@ -12,7 +21,7 @@ The AWS client is installed on the machine, and the AWS configuration and creden
 
 
 
-
+<a name="code"/>
 ## Lambda function code 
 
 
