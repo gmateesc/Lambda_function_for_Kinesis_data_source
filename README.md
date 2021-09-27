@@ -61,17 +61,11 @@ Part I: Create Lambda Function that is connected to a Kinesis Data Source
 
     4.3 Test the lambda function
 
-         4.3.0 Raw binary vs base64 input files
-                4.3.0.1 Prefix file:// vs fileb:// and how they are handled
-                4.3.0.2 How to set cli_binary_format option
+         4.3.1 Raw binary vs base64 input files
 
          4.3.1 Create the input file
 
-         4.3.2 Run "aws lambda invoke" to send the event to the function
-
-         4.3.3 Inspect result
-
-         4.3.4 Invoke lambda func with a sample event frm US-EAST-1
+         4.3.3 Invoke lambda func with a sample event from US-EAST-1
 
 
 
@@ -741,8 +735,11 @@ Steps:
 
 See
 
-  https://docs.aws.amazon.com/lambda/latest/dg/with-kinesis-example.html
+  https://console.aws.amazon.com/lambda/home?region=us-east-1#/discover
+  https://console.aws.amazon.com/lambda/home?region=us-east-1#/functions
+  https://console.aws.amazon.com/lambda/home?region=us-east-1#/functions/ProcessKinesisRecords?tab=code
 
+  https://docs.aws.amazon.com/lambda/latest/dg/with-kinesis-example.html
 
 ---
 
@@ -754,17 +751,13 @@ command and a sample Kinesis event.
 ---
 
 
-4.3.0 Raw binary vs base64 input files
+4.3.1 Raw binary vs base64 input files
 --------------------------------------
 
 See
 
   https://docs.aws.amazon.com/sdkref/latest/guide/setting-global-cli_binary_format.html
   
-
-
-4.3.0.1 Prefix file:// vs fileb:// and how they are handled
------------------------------------------------------------
 
 To test the Lambda Function, we will pass to the 'aws lambda' CLI the URL of a input file.
 
@@ -777,67 +770,9 @@ The AWS CLI can handle base64 and raw input files, and it determines how to hand
   o the AWS CLI version
 
 
-as follows:
 
-
-  o If you specify a binary value by referencing a file using the
-      file://
-    prefix notation, the AWS CLI version 2 handles the file according to the current
-    cli_binary_format setting.
-        * If that setting's value is 'base64' (the default), the CLI handles the file as
-	  base64-encoded text.
-	* If that setting's value is raw-in-base64-out, the AWS CLI version 2 handles the
-	  file as raw binary content.
-    The AWS CLI version 1 always handles a file referenced by file:// as raw binary content.
-
-
-  o If you specify a binary value by referencing a file using the
-      fileb://
-    prefix notation, the AWS CLI always handles the file as raw binary content
-    and doesn't attempt oo convert the value.
-
-
-
-So the option cli-binary-format is relevant for file:// prefix spec of input files
+The option cli-binary-format is relevant for file:// prefix spec of input files
 that are raw binary when using AWS CLI version 2.
-
-
-Valid values of the cli-binary-format option are
-
-  o base64 – An input parameter that is typed as a binary large object (BLOB) that
-             accepts a base64-encoded string:
-	       
-	     * To pass true binary content, put the content in a file and provide the file's path and name
-	       with the
-	          fileb://
-	       prefix as the parameter's value.
-
-             * To pass base64-encoded text contained in a file, provide the file's path and name with the
-                  file://
-	       prefix as the parameter's value.
-
-             The default value of the cli-binary-format option is 'base64' in AWS CLI version 2.
-
-
- o raw-in-base64-out – Provides backward compatibility with the AWS CLI version 1 behavior
-                       where binary values must be passed literally.
-
-
----
-
-NOTICE:
-
-The output is base64 in all cases. So the 'base64' option means
-
-   base64-in-base64-out
-
-
----
-
-
-
-Conclusion
-----------
 
 If you are using AWS CLI version 2, and the file:// notation, then the cli-binary-format option
 to the aws cli is required to pass raw input data (because the 'base64' default is incorrect
@@ -853,160 +788,8 @@ Check the AWS CLI version
 
 
 
-
-4.3.0.2 How to set cli_binary_format option
--------------------------------------------
-
-Two ways:
-
-o in the AWS config file:  
-
-  Insert in ~/.aws/config the line
-  
-    cli_binary_format = raw-in-base64-out
-
-
-o as AWS CLI parameter:
-
-   aws lambda invoke --cli-binary-format raw-in-base64-out ....
-
-
----
-
-
-
-
-
-4.3.1 Create the input file
+4.3.2 Create the input file
 ---------------------------
-
-
-Create a JSON input file, input_us-east-2.txt, containing a sample Kinesis event:
-
-
-  gabriel $ cd ~/Desktop/GoogleDrive/Cloud/Deployment/02_Terraform/07_Serverless_lambda/03_AWS_lambda_kinesis/02_Code
-
-  gabriel $ more input_us-east-2.txt
-  {
-    "Records": [
-        {
-            "kinesis": {
-                "kinesisSchemaVersion": "1.0",
-                "partitionKey": "1",
-                "sequenceNumber": "49590338271490256608559692538361571095921575989136588898",
-                "data": "SGVsbG8sIHRoaXMgaXMgYSB0ZXN0Lg==",
-                "approximateArrivalTimestamp": 1545084650.987
-            },
-            "eventSource": "aws:kinesis",
-            "eventVersion": "1.0",
-            "eventID": "shardId-000000000006:49590338271490256608559692538361571095921575989136588898",
-            "eventName": "aws:kinesis:record",
-            "invokeIdentityArn": "arn:aws:iam::123456789012:role/lambda-kinesis-role",
-            "awsRegion": "us-east-2",
-            "eventSourceARN": "arn:aws:kinesis:us-east-2:123456789012:stream/lambda-stream"
-        }
-    ]
-  }
----
-
-
-
-
-
-
-
-
-4.3.2 Run "aws lambda invoke" to send the event to the function
----------------------------------------------------------------
-
-
-Steps:
-
-
-1. Check if we need to specify cli-binary format option to the AWS CLI:
-
-     gabriel $ aws --version
-     aws-cli/2.0.62 Python/3.9.0 Darwin/19.6.0 source/x86_64
-
-   Because it is version 2, need to use
-   
-      aws lambda invoke --cli-binary-format raw-in-base64-out ....
-
-   for input file payload specified with file://
-   
-
-
-2. Use the invoke command to send the event to the function and save the response to output_us-east-2.txt.
-
-
-o Before 'aws lambda invoke':
-
-    gabriel $ cd ~/Desktop/GoogleDrive/Cloud/Deployment/02_Terraform/07_Serverless_lambda/03_AWS_lambda_kinesis/02_Code
-
-    gabriel $ ls -1
-    function.zip
-    index.js
-    input_us-east-2.txt
-    zip_js.sh
-
-
-
-o Run 'aws lambda invoke'
-
-    gabriel $ cd ~/Desktop/GoogleDrive/Cloud/Deployment/02_Terraform/07_Serverless_lambda/03_AWS_lambda_kinesis/02_Code
-
-    gabriel $ aws lambda invoke \
-                      --cli-binary-format raw-in-base64-out \
-                      --function-name ProcessKinesisRecords \
-                      --payload file://input_us-east-2.txt   \
-                      output_us-east-2.txt
-    {
-      "StatusCode": 200,
-      "ExecutedVersion": "$LATEST"
-    }
-
-
-
-o Before 'aws lambda invoke':
-
-    gabriel $ cd ~/Desktop/GoogleDrive/Cloud/Deployment/02_Terraform/07_Serverless_lambda/03_AWS_lambda_kinesis/02_Code
-
-    gabriel $ ls -1
-    function.zip
-    index.js
-    input_us-east-2.txt
-    output_us-east-2.txt    
-    zip_js.sh
-
-
----
-
-
-
-4.3.3 Inspect result
---------------------
-
-  gabriel $ cd ~/Desktop/GoogleDrive/Cloud/Deployment/02_Terraform/07_Serverless_lambda/03_AWS_lambda_kinesis/02_Code
-
-  gabriel $ more out.txt 
-  null
-
-
----
-
-
-
-
-
-4.3.4 Invoke lambda func with a sample event frm US-EAST-1
-----------------------------------------------------------
-
-See
-
-  https://console.aws.amazon.com/lambda/home?region=us-east-1#/discover
-  https://console.aws.amazon.com/lambda/home?region=us-east-1#/functions
-  https://console.aws.amazon.com/lambda/home?region=us-east-1#/functions/ProcessKinesisRecords?tab=code
-
 
 Use the lambda UI to go to the function, click on Test tab, select "Configure test event",
 then in the "Event template" box enter
@@ -1041,7 +824,14 @@ and you see this JSON
 
 
 
-Save it as input_us-east-1.txt then run
+Save it as input_us-east-1.json then run
+
+
+---
+
+
+4.3.3 Invoke lambda func with a sample event from US-EAST-1
+-----------------------------------------------------------
 
 
    gabriel $ cd ~/Desktop/GoogleDrive/Cloud/Deployment/02_Terraform/07_Serverless_lambda/03_AWS_lambda_kinesis/02_Code
@@ -1049,7 +839,7 @@ Save it as input_us-east-1.txt then run
    gabriel $ aws lambda invoke \
                       --cli-binary-format raw-in-base64-out \
                       --function-name ProcessKinesisRecords \
-                      --payload file://input_us-east-1.txt  \
+                      --payload file://input_us-east-1.json \
                       output_us-east-2.txt
    {
       "StatusCode": 200,
@@ -1312,7 +1102,7 @@ ProcessKinesisRecords function, specifying the --log-type Tail option.
    gabriel $ aws lambda invoke \
                       --cli-binary-format raw-in-base64-out \
                       --function-name ProcessKinesisRecords \
-                      --payload file://input_us-east-1.txt  \
+                      --payload file://input_us-east-1.json \
                       --log-type Tail		            \
 	              output_us-east-1a.txt
   {
@@ -1340,7 +1130,7 @@ Run
    gabriel $ aws lambda invoke \
                       --cli-binary-format raw-in-base64-out \
                       --function-name ProcessKinesisRecords \
-                      --payload file://input_us-east-1.txt  \
+                      --payload file://input_us-east-1.json \
                       --log-type Tail		            \
                       --query 'LogResult'                   \
 		      --output text                         \
@@ -1380,7 +1170,7 @@ i.e.,
    gabriel $ aws lambda invoke \
                         --cli-binary-format raw-in-base64-out \
                         --function-name ProcessKinesisRecords \
-                        --payload file://input_us-east-1.txt  \
+                        --payload file://input_us-east-1.json \
                         --log-type Tail		              \
 	                output_us-east-1a.txt                 \
 			| jq -M '.LogResult' | sed 's/\"//g' | base64 -d
@@ -1961,17 +1751,17 @@ Event source mappings can be disabled to pause polling temporarily without losin
 
 In section
 
-  4.3.4 Invoke lambda func with a sample event frm US-EAST-1
+  4.3.3 Invoke lambda func with a sample event frm US-EAST-1
 
 we invoked the lambda function explicitly passing as payload the content of a sample Kinesis record,
-in the file input_us-east-1.txt 
+in the file input_us-east-1.json
 
    gabriel $ cd ~/Desktop/GoogleDrive/Cloud/Deployment/02_Terraform/07_Serverless_lambda/03_AWS_lambda_kinesis/02_Code
 
    gabriel $ aws lambda invoke \
                       --cli-binary-format raw-in-base64-out \
                       --function-name ProcessKinesisRecords \
-                      --payload file://input_us-east-1.txt  \
+                      --payload file://input_us-east-1.json \
                       output_us-east-2.txt
    {
       "StatusCode": 200,
