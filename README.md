@@ -4,15 +4,32 @@ Implement a Lambda function that consumes events from Kinesis and exports them t
 
 
 
-## Table of Contents  
-[Headers](#preqs)  
-
-[Lambda function code](#code)
+## Table of Contents
 
 
+- [Headers](#prereqs)  
 
-<a name="prereqs"/>
+- [Lambda function code](#code)
+
+- [Configuration](#config)
+
+- [Load balancing](#lb)
+
+- [Deployment to Kubernetes](#deploy2k8s)
+  - [The Kubernetes resources created](#k8s-rsrc)
+  - [Downstream service instances](#downstream-svc)
+  - [Create config-map resource](#configmap)
+  - [Deployment of the application](#deploy-app)
+  - [Access the reverse proxy](#access-svc)
+
+
+
+
+
+
+<a name="prereqs" id="prereqs" />
 ## Prerequisites
+
 
 The AWS client is installed on the machine, and the AWS configuration and credentials are set up under
 ```bash
@@ -21,8 +38,9 @@ The AWS client is installed on the machine, and the AWS configuration and creden
 
 
 
-<a name="code"/>
+<a name="code" id="code" />
 ## Lambda function code 
+
 
 
 I have implemented the lambda function in Python. I developed the code
