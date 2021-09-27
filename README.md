@@ -7,7 +7,7 @@ Implement a Lambda function that consumes events from Kinesis and exports them t
 ## Table of Contents
 
 
-- [Headers](#prereqs)  
+- [Prerequisites](#prereqs)  
 
 - [Lambda function code](#code)
 
@@ -15,6 +15,16 @@ Implement a Lambda function that consumes events from Kinesis and exports them t
 
 - [Create IAM role 'lambda-get-kinesis-events-export-to-s3'](#iam_role)
   - [Create policy document](#iam_policy)
+  - [Run 'aws iam create-role --role-name lambda-get-kinesis-events-export-to-s3'](#iam_create_role)
+  - [Check role lambda-get-kinesis-events-export-to-s3](#iam_check_role)
+  - [Assign policies to the role lambda-get-kinesis-events-export-to-s3](#role_policies)
+    - [Initial policies attached to role 'lambda-get-kinesis-events-export-to-s3'](#role_policies_ini)
+    - [Attach policies to the role 'lambda-get-kinesis-events-export-to-s3'](#role_policies_attach)
+    - [Check policies attached to the role 'lambda-get-kinesis-events-export-to-s3'](#check_policies)
+
+- [Create the S3 bucket 'lambda-for-kinesis-ds-gabriel' and attach bucket policy](#s3_mb)#
+
+
 
 
 
@@ -140,18 +150,17 @@ The  policy doc is
 
 
 
-
+<a name="iam_create_role" id="iam_create_role"></a>
 ### Run 'aws iam create-role --role-name lambda-get-kinesis-events-export-to-s3'
 
 
 Create role 'lambda-get-kinesis-events-export-to-s3'
-
-  gabriel $ cd ~/Desktop/GoogleDrive/Cloud/Deployment/02_Terraform/07_Serverless_lambda/03_AWS_lambda_kinesis/02_Code
+```
+  gabriel $ cd src
 
   gabriel $ aws iam create-role \
          --role-name lambda-get-kinesis-events-export-to-s3 \
          --assume-role-policy-document file://lambda-trust-policy.json
-
   {
     "Role": {
         "Path": "/",
@@ -173,11 +182,13 @@ Create role 'lambda-get-kinesis-events-export-to-s3'
         }
     }
   }
+```
 
 
 
 
-#### Check role lambda-get-kinesis-events-export-to-s3
+<a name="iam_check_role" id="iam_check_role"></a>
+### Check role lambda-get-kinesis-events-export-to-s3
 
   gabriel $ aws iam get-role --role-name lambda-get-kinesis-events-export-to-s3
   {
@@ -209,12 +220,14 @@ Create role 'lambda-get-kinesis-events-export-to-s3'
 
 
 
+<a name="role_policies" id="role_policies"></a>
 ### Assign policies to the role lambda-get-kinesis-events-export-to-s3
 
 
 Will assign the polices needed to access Kinesis, CloudWatch and S3.
 
 
+<a name="role_policies_ini" id="role_policies_ini"></a>
 #### Initial policies attached to role 'lambda-get-kinesis-events-export-to-s3'
 
 ```bash
@@ -222,12 +235,12 @@ Will assign the polices needed to access Kinesis, CloudWatch and S3.
     {
       "AttachedPolicies": []
     }
-
 ```
 
 
 
-#### Attach the following policies to the role 'lambda-get-kinesis-events-export-to-s3'
+<a name="role_policies_attach" id="role_policies_attach"></a>
+#### Attach policies to the role 'lambda-get-kinesis-events-export-to-s3'
 
 
 - AWSLambdaBasicExecutionRole
@@ -271,7 +284,7 @@ Will assign the polices needed to access Kinesis, CloudWatch and S3.
 ```
 
 
-
+<a name="check_policies" id="check_policies"></a>
 #### Check policies attached to the role 'lambda-get-kinesis-events-export-to-s3'
 ```
    gabriel $ aws iam list-attached-role-policies --role-name lambda-get-kinesis-events-export-to-s3
@@ -305,8 +318,7 @@ Will assign the polices needed to access Kinesis, CloudWatch and S3.
 
 
 
-
-
+<a name="s3_mb" id="s3_mb"></a>
 ## Create the S3 bucket 'lambda-for-kinesis-ds-gabriel' and attach bucket policy
 
 
