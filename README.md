@@ -143,16 +143,16 @@ Part II: Logging to s3
 6. Export CloudWatch logs to S3
 
 
-    6.1 Create S3 bucket
-          6.1.1 First pass: "aws s3 mb" [TEMP]
-          6.1.2 Second pass: "aws s3 create-bucket" [DONE]
-          6.1.3 Check the S3 bucket ARN
+    6.1 Create S3 bucket 'lambda-for-kinesis-ds-gabriel'
+          6.1.1 Run the "aws s3 create-bucket" CLI
+          6.1.2 Check the S3 bucket ARN
 
 
-    6.2 Create S3 bucket policy [DONE]
+    6.2 Create S3 bucket policy and attach it to bucket 'lambda-for-kinesis-ds-gabriel'
           6.2.0 Command 'aws s3api put-bucket-policy'
           6.2.1 Create S3 bucket policy "s3-bucket-policy.json"
           6.2.2 Attach the policy to the bucket lambda-for-kinesis-ds-gabriel
+
 
     6.3 Attach policies to role lambda-kinesis-role-created-from-console
           6.3.0 Inital status of role lambda-kinesis-role-created-from-console
@@ -2084,9 +2084,8 @@ Part II: Logging to s3
 
 
 
-6.1 Create S3 bucket
----------------------
-
+6.1 Create S3 bucket 'lambda-for-kinesis-ds-gabriel'    
+----------------------------------------------------
 
 See
 
@@ -2113,37 +2112,9 @@ Check
 
 
 
-6.1.1 First pass: "aws s3 mb" [TEMP]
---------------------------------------
+6.1.1 Run the "aws s3 create-bucket" CLI
+----------------------------------------
 
-Synopsis
-
-  gabriel $ aws s3 mb s3://lambda-for-kinesis-ds-gabriel --region=us-east-1
-  make_bucket: lambda-for-kinesis-ds-gabriel
-
-
-
-Check
-
-  gabriel $ aws s3 ls s3://lambda-for-kinesis-ds-gabriel --region=us-east-1
-
-
-
-Remove bucket
-
-  gabriel $ aws s3 rb s3://lambda-for-kinesis-ds-gabriel --region=us-east-1 --force
-  remove_bucket: lambda-for-kinesis-ds-gabriel
-
-  gabriel $ aws s3 ls s3://lambda-for-kinesis-ds-gabriel --region=us-east-1
-  An error occurred (NoSuchBucket) when calling the ListObjectsV2 operation: The specified bucket does not exist
-
-
----
-
-
-
-6.1.2 Second pass: "aws s3 create-bucket" [DONE]
--------------------------------------------------
 
 See
 
@@ -2210,7 +2181,7 @@ Show ACL
 
 
 
-6.1.3 Check the S3 bucket ARN
+6.1.2 Check the S3 bucket ARN
 ------------------------------
 
 Go to the S3 console
@@ -2527,8 +2498,8 @@ Check
 
 
 
-6.2 Create S3 bucket policy [DONE]
------------------------------------
+6.2 Create S3 bucket policy and attach it to bucket 'lambda-for-kinesis-ds-gabriel'
+-----------------------------------------------------------------------------------
 
 See
 
