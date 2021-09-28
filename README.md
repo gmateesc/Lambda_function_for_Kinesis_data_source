@@ -51,7 +51,7 @@
 ## Objective
 
 This page shows the implementation in Python of an AWS Lambda function
-that received events from a Kinesis event stream and exports them to S3.
+that receives events from a Kinesis event stream and exports them to S3.
 
 
 
@@ -1016,6 +1016,6 @@ Steps:
 ## Conclusion
 
 
-We have implemented a Lambda function that receives event records from a Kinesis stream and exports them to an S3 bucket.
+We have implemented an AWS Lambda function that receives event records from a Kinesis stream and exports them to an S3 bucket.
 
 
