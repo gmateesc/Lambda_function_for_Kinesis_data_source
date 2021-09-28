@@ -28,6 +28,13 @@ Implement a Lambda function that consumes events from Kinesis and exports them t
     - [Create S3 bucket policy "s3-bucket-policy.json"](#s3_policy_create)
     - [Attach the policy to the bucket lambda-for-kinesis-ds-gabriel](#s3_policy_attach)
 
+- [Create the Kinesis event stream 'kinesis-stream-for-lambda'](#create_kinesis_ev_stream)
+
+- [Create the lambda function ProcessKinesisEventsAndPersistToS3](#create_lambda_func)
+  - [Create deployment package](#create_deploy_pkg)
+  - [Create lambda-function ProcessKinesisEventsAndPersistToS3](#create_func)
+
+
 
 
 
@@ -478,38 +485,9 @@ and
 
 
 
-## Create Kinesis stream and associate it with the Lambda function
 
-
-
-### How to create Kinesis stream and make it the event source for the lambda function [DOC]
-
-Steps:
-
-
-1. Use the create-stream command to create a stream:
-
-     aws kinesis create-stream --stream-name KINESIS_EVENT_STREAM_NAME --shard-count 1
-
-
-
-2. Then get the stream ARN using the describe-stream command:
-
-     aws kinesis describe-stream --stream-name KINESIS_EVENT_STREAM_NAME
-
-
-
-3. Define the Kinesis stream as event source for the lambda function
-
-   aws lambda create-event-source-mapping \
-      --function-name LAMBDA_FUNCTION \
-      --event-source  ARN_OF_KINESIS_EVENT_SOURCE
-      --batch-size 100 \
-      --starting-position LATEST
-
-
-
-### Create the Kinesis event stream 'kinesis-stream-for-lambda'
+<a name="create_kinesis_ev_stream" id="create_kinesis_ev_stream"></a>
+## Create the Kinesis event stream 'kinesis-stream-for-lambda'
 
 
 1. Use the create-stream command to create the stream 'kinesis-stream-for-lambda':
@@ -534,10 +512,11 @@ to associate the Kinesis data stream with the Lambda function.
 
 
 
-## Create the lambda function
+<a name="create_lambda_func" id="create_lambda_func"></a>
+## Create the lambda function ProcessKinesisEventsAndPersistToS3
 
 
-
+<a name="create_deploy_pkg" id="create_deploy_pkg"></a>
 ### Create deployment package
 
 
@@ -570,6 +549,12 @@ Check zip file
 
 
 
+
+
+
+
+
+<a name="create_func" id="create_func"></a>
 ### Create lambda-function ProcessKinesisEventsAndPersistToS3
 
 
