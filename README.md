@@ -1,11 +1,9 @@
 # Lambda_function_for_Kinesis_data_source
 
-Implement a Lambda function that consumes events from Kinesis and exports them to S3.
-
-
 
 ## Table of Contents
 
+- [Objective](#objective)
 
 - [Prerequisites](#prereqs)  
 
@@ -45,6 +43,14 @@ Implement a Lambda function that consumes events from Kinesis and exports them t
   - [Get the S3 object created by lambda invocation](#get_s3_obj)
 
 - [Conclusion](#conclusion)
+
+
+
+
+<a name="objective" id="objective"></a>
+## Objective
+
+This page shows the implementation in Python of a Lambda function that consumes events from Kinesis and exports them to S3.
 
 
 
