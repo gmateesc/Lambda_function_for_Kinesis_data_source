@@ -34,6 +34,10 @@ Implement a Lambda function that consumes events from Kinesis and exports them t
   - [Create deployment package](#create_deploy_pkg)
   - [Create lambda-function ProcessKinesisEventsAndPersistToS3](#create_func)
 
+- [Add 'kinesis-stream-for-lambda' as event source to the Lambda function](#map_event_stream)
+  - [The Kinesis stream "kinesis-stream-for-lambda"](#the_event_stream)
+  - [Add Kinesis stream as event source to function 'ProcessKinesisRecords'](#add_event_stream)
+  - [Check event source mappings for lambda function 'ProcessKinesisEventsAndPersistToS3'](#check_event_map)
 
 
 
@@ -101,8 +105,8 @@ Let's describe the Python code in detail:
 ```
 
 The `lambda_handler` function receives receives and processes events from a Kinesis data,
-which is configured as shown in section "Add Kinesis stream 'kinesis-stream-for-lambda' 
-as event source to Lambda func 'ProcessKinesisEventsAndPersistToS3'".
+which is configured as shown in section "Add 'kinesis-stream-for-lambda' as event source to 
+Lambda function".
 
 
 The for loop iterates over all event records in `event['Records']`, extracts the payload,
@@ -504,7 +508,7 @@ and
 
 We will use the stream ARN in section 
 ```
-  Add Kinesis stream 'kinesis-stream-for-lambda' as event source to Lambda func 'ProcessKinesisEventsAndPersistToS3'
+  Add 'kinesis-stream-for-lambda' as event source to Lambda function
 ```
 to associate the Kinesis data stream with the Lambda function.
 
@@ -605,13 +609,11 @@ Steps:
 ```
 
 
+<a name="map_event_stream" id="map_event_stream"></a>
+## Add 'kinesis-stream-for-lambda' as event source to the Lambda function
 
 
-
-
-## Add Kinesis stream 'kinesis-stream-for-lambda' as event source to Lambda func 'ProcessKinesisEventsAndPersistToS3'
-
-
+<a name="the_event_stream" id="the_event_stream"></a>
 ### The Kinesis stream "kinesis-stream-for-lambda"
 
 Get name and ARN of Kinesis stream 
@@ -629,7 +631,11 @@ Get name and ARN of Kinesis stream
 ```
 
 
+
+
+<a name="add_event_stream" id="add_event_stream"></a>
 ### Add Kinesis stream as event source to function 'ProcessKinesisRecords'
+
 
 Steps
 
@@ -693,6 +699,10 @@ Steps
 ```
 
 
+
+
+
+<a name="check_event_map" id="check_event_map"></a>
 ### Check event source mappings for lambda function 'ProcessKinesisEventsAndPersistToS3'
 
 
