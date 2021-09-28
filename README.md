@@ -50,7 +50,8 @@
 <a name="objective" id="objective"></a>
 ## Objective
 
-This page shows the implementation in Python of a Lambda function that consumes events from Kinesis and exports them to S3.
+This page shows the implementation in Python of an AWS Lambda function
+that received events from a Kinesis event stream and exports them to S3.
 
 
 
