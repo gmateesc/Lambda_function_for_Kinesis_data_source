@@ -1007,6 +1007,6 @@ Steps:
 ## Conclusion
 
 
-We have implemented a Lambda function that receives event records from a Kinesis stream and exports them to and S3 bucket.
+We have implemented a Lambda function that receives event records from a Kinesis stream and exports them to an S3 bucket.
 
 
