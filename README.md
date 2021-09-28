@@ -39,6 +39,13 @@ Implement a Lambda function that consumes events from Kinesis and exports them t
   - [Add Kinesis stream as event source to function 'ProcessKinesisRecords'](#add_event_stream)
   - [Check event source mappings for lambda function 'ProcessKinesisEventsAndPersistToS3'](#check_event_map)
 
+- [Test the lambda function](#lambda_test)
+  - [Create simple Kinesis event kinesis_simple_event.json](#kinesis_event_json)
+  - [Invoke lambda function with event kinesis_simple_event.json](#invoke_lambda)
+  - [Get the S3 object created by lambda invocation](#get_s3_obj)
+
+- [Conclusion](#conclusion)
+
 
 
 
@@ -753,15 +760,11 @@ and verify that "State" is "Enabled":
 
 
 
-## Test the lambda function
-
-
-
-
+<a name="kinesis_event_json" id="kinesis_event_json"></a>
 ### Create simple Kinesis event kinesis_simple_event.json
 
 
-Create the folloing Kinesis sample event in kinesis_simple_event.json 
+Create the following Kinesis sample event in kinesis_simple_event.json 
 ```
   gabriel $ cd src
 
@@ -790,10 +793,14 @@ Create the folloing Kinesis sample event in kinesis_simple_event.json
 
 
 
+
+
+
+<a name="invoke_lambda" id="invoke_lambda"></a>
 ### Invoke lambda function with event kinesis_simple_event.json
 
 
-Invoke lambda function ProcessKinesisEventsAndPersistToS3 in several ways
+Invoke the lambda function ProcessKinesisEventsAndPersistToS3 in several ways
 
 
 1. Invoke with payload file://kinesis_simple_event.json and get the returned valus
@@ -895,6 +902,16 @@ and check output
 
 
 
+
+One can also test the Lambda function with the sample Kinesis event from the
+AWS Lambda console
+
+
+![lambda function test](images/lambda_function_test.png)
+
+
+
+<a name="get_s3_obj" id="get_s3_obj"></a>
 ### Get the S3 object created by lambda invocation
 
 Steps:
@@ -968,7 +985,7 @@ Steps:
 
 
 
-3. Get the object of intrest
+3. Get the object of interest
 ```
    gabriel $ aws s3api get-object --bucket lambda-for-kinesis-ds-gabriel --key "1632771546597_ms" s3_out
    {
@@ -984,4 +1001,12 @@ Steps:
    gabriel $ more s3_out 
    Hello, this is a test 123.
 ```
+
+
+<a name="conclusion" id="conclusion"></a>
+## Conclusion
+
+
+We have implemented a Lambda function that receives event records from a Kinesis stream and exports them to and S3 bucket.
+
 
