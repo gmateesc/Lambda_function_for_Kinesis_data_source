@@ -400,9 +400,11 @@ with ARNs
 ```
 
 
-Define the policy document
+Create the policy document
+
 ```
   gabriel $ cd src
+
   gabriel $ cat s3-bucket-policy.json 
   {
     "Version": "2012-10-17",
